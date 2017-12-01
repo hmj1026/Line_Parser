@@ -37,4 +37,150 @@ function file_storage($data) {
 	return print_r(json_encode($ret));
 }
 
+function loadText($file, $index = -1, $dataType = null) {
+	$time_start = microtime(true);
+
+	$text = file_get_contents($file);
+	$rows = explode("\n", $text);
+
+	$data = array();
+	if (is_array($data)) {
+		foreach ($rows as $key => $row) {
+
+			if (preg_match("/^\d{4}\/\d{2}\/\d{2}（/", $row)) {
+				if (!array_key_exists($row, $data)) {
+	    			$data["time"][] = $key;
+	    			$data["status"][$key] = array(
+	     				"date" => $row,
+	     				"count" => 0,
+	     				"join" => 0,
+	     				"quit" => 0
+	     				);
+	    			$data[$row] = array();
+	   			}
+	  		}
+	 	}
+
+	 	$timeArr = is_array($data["time"]) ? $data["time"] : array();
+	 	array_push($timeArr,count($rows) - 1);
+	 	foreach ($timeArr as $k2 => $v2) {
+	  		$nextKey = $k2 + 1;
+
+	  		if (array_key_exists($nextKey,$timeArr)) {
+	  			$tempValue = array();
+	    		for($i=$v2+1;$i<$timeArr[$nextKey];$i++){
+	    			if (array_key_exists($rows[$v2], $data)) {
+
+	    				//統計每日發言狀態
+	    				if (!array_key_exists("status", $data[$rows[$v2]])) {
+	    					$data[$rows[$v2]]["status"] = array();
+	    				}
+
+	    				$tempValue = preg_split("/\s/", $rows[$i]);
+	    				// $tempValue = preg_split("/[\x{4e00}-\x{9fa5}]{2}\d{2}:\d{2}/u", $rows[$i]);
+	     				if (!empty($tempValue)) {
+	     					$tempData = trim(implode(" ",array_splice($tempValue,1, count($tempValue))));
+	     					$tempData = explode(" ", $tempData);
+
+	     					//系統訊息過濾
+	     					if (count($tempData) == 1) {
+	     						if (preg_match("/加入群組/", $tempData[0])) {
+		      						$data["status"][$v2]["join"] +=1;
+			     				}
+
+				     			if (preg_match("/已退出群組/", $tempData[0])) {
+				      				$data["status"][$v2]["quit"] +=1;
+				     			}
+	     					} elseif (count($tempData) > 1) {
+	     						//發言訊息過濾
+	     						if(count($tempData) == 2) {
+	     							$author = trim($tempData[0]);
+	     							$data[$rows[$v2]]["data"][] = array(
+		     							"author" => $author,
+		     							"content" => $tempData[1],
+		     							"date_t" => $tempValue[0]
+		     						);
+		     						$data["status"][$v2]["count"] +=1;
+
+		     						//發言訊息統計
+		     						if (!array_key_exists($author, $data[$rows[$v2]]["status"])) {
+		     							$data[$rows[$v2]]["status"][$author] = 0;
+		     						}
+		     						$data[$rows[$v2]]["status"][$author] +=1;
+
+	     						} else {
+	     							switch (trim($tempData[0])) {
+	     								//特殊ID處理
+	     								case '蔡孟寰（Joe':
+	     								case 'Ricky':
+	     								case 'YUN':
+	     								case '婠柔':
+	     									$data[$rows[$v2]]["data"][] = array(
+	     										"author" => $tempData[0]." ".$tempData[1],
+			     								"content" => implode("",array_slice($tempData,2)),
+			     								"date_t" => $tempValue[0]
+			     								);
+
+	     									//發言訊息統計
+	     									$author = trim($tempData[0]." ".$tempData[1]);
+				     						if (!array_key_exists($author, $data[$rows[$v2]]["status"])) {
+				     							$data[$rows[$v2]]["status"][$author] = 0;
+				     						}
+				     						$data[$rows[$v2]]["status"][$author] +=1;
+	     									break;
+	     								default:
+	     									$data[$rows[$v2]]["data"][] = array(
+	     										"author" => $tempData[0],
+			     								"content" => count($tempData) > 2 ? implode("",array_slice($tempData,1)) : $tempData[1],
+			     								"date_t" => $tempValue[0],
+			     								);
+
+	     									//發言訊息統計
+	     									$author = trim($tempData[0]);
+				     						if (!array_key_exists($author, $data[$rows[$v2]]["status"])) {
+				     							$data[$rows[$v2]]["status"][$author] = 0;
+				     						}
+				     						$data[$rows[$v2]]["status"][$author] +=1;
+	     									break;
+	     							}
+	     							$data["status"][$v2]["count"] +=1;
+	     						}	
+	     					}
+	     				}
+	    			} else {
+	     				continue;
+	    			}
+	   			}
+	  		}
+	 	}
+	}
+
+	echo "<pre>";
+	$chatDay = array();
+	if(is_array($data)){
+		foreach ($data as $key => $value) {
+			$chatDay[] = $key;
+		}
+	}
+	print_r($chatDay);
+	
+	print_r($chatDay[$index]);
+	print_r("發言人數： ".count($data[$chatDay[$index]]["status"]));
+	echo "<br>";
+	if($index > 1 && isset($dataType)) {
+		arsort($data[$chatDay[$index]]["status"]);
+		print_r($data[$chatDay[$index]][$dataType]);
+	} elseif($index > 1 && !isset($dataType)) {
+		arsort($data[$chatDay[$index]]["status"]);
+		print_r($data[$chatDay[$index]]);
+	} elseif ($index ==0) {
+		print_r($data["time"]);
+	} elseif ($index ==1) {
+		print_r($data["status"]);
+	}
+	
+	$time = microtime(true) - $time_start;
+	print_r($time);
+}
+
 ?>
