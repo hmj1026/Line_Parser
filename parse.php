@@ -1,7 +1,12 @@
 <?php
 
-if (isset($_FILES)) {
+
+if (isset($_FILES) && !empty($_FILES)) {
 	file_storage($_FILES); 
+}
+
+if (isset($_POST) && !empty($_POST)) {
+	get_Date($_POST);
 }
 
 function file_storage($data) {
@@ -51,6 +56,7 @@ function loadText($file, $index = -1, $dataType = null) {
 				if (!array_key_exists($row, $data)) {
 	    			$data["time"][] = $key;
 	    			$data["status"][$key] = array(
+	    				"index" => 0,
 	     				"date" => $row,
 	     				"count" => 0,
 	     				"join" => 0,
@@ -155,32 +161,91 @@ function loadText($file, $index = -1, $dataType = null) {
 	 	}
 	}
 
-	echo "<pre>";
 	$chatDay = array();
 	if(is_array($data)){
+		//chat data index array
 		foreach ($data as $key => $value) {
 			$chatDay[] = $key;
+			
+		}
+
+
+		foreach ($chatDay as $key => $value) {
+			if($key == 0 || $key ==1) {
+				continue;
+			}
+
+			foreach ($data["status"] as $key2 => $value2) {
+				if (!is_array($value2)) {
+					continue;
+				}
+				if ($value == $value2["date"]) {
+					$data["status"][$key2]["index"] = $key;
+				}
+				
+			}
+			
 		}
 	}
-	print_r($chatDay);
 	
-	print_r($chatDay[$index]);
-	print_r("發言人數： ".count($data[$chatDay[$index]]["status"]));
-	echo "<br>";
+	// print_r("發言人數： ".count($data[$chatDay[$index]]["status"]));
+	// echo "<br>";
 	if($index > 1 && isset($dataType)) {
 		arsort($data[$chatDay[$index]]["status"]);
-		print_r($data[$chatDay[$index]][$dataType]);
+		return $data[$chatDay[$index]][$dataType];
 	} elseif($index > 1 && !isset($dataType)) {
 		arsort($data[$chatDay[$index]]["status"]);
-		print_r($data[$chatDay[$index]]);
+		return $data[$chatDay[$index]];
 	} elseif ($index ==0) {
-		print_r($data["time"]);
+		return $data["time"];
 	} elseif ($index ==1) {
-		print_r($data["status"]);
+		//return $data["status"];
+		return $chatDay;
 	}
 	
-	$time = microtime(true) - $time_start;
-	print_r($time);
+	// $time = microtime(true) - $time_start;
+	// print_r($time);
+}
+
+function get_Date($data) {
+	$ret = array("success" => false, "result" => null);
+
+	//check file folder
+	$folderName = "file";
+	$fileName = array();
+	if ((boolean)is_dir($folderName)) {
+		$files =  array_filter(glob('./'.$folderName.'/*'), 'is_file');
+		if (is_array($files) && count($files) > 0) {
+			foreach ($files as $key  => $file) {
+				if (empty($file)) {
+					continue;
+				}
+				//$tempFile[$key] = explode("/", $file);
+				$tempFile = explode("/", $file);
+				$fileName[$key] = substr($tempFile[2], 0, -4);
+			}
+
+			if (is_array($fileName) && count($fileName) > 0) {
+				$fileIndex = max(array_keys($fileName));
+				$curFile = $files[$fileIndex];
+			}
+
+			if (isset($curFile) && !empty($curFile)) {
+				$parseData = loadText($curFile,1);
+
+				unset($parseData[0]);
+				unset($parseData[1]);
+			}
+
+			if (is_array($parseData) && count($parseData) > 0) {
+				$ret["success"] = true;
+				$ret["result"] = $parseData;
+			}
+		}
+		
+	}
+	
+	return print_r(json_encode($ret, JSON_UNESCAPED_UNICODE));
 }
 
 ?>

@@ -53,7 +53,12 @@
                     <h1>Date</h1>
                 </div>
                 <div class="col-md-12">
-                    aaa
+                    <div class="form-group">
+                        <label for="date">選擇日期：</label>
+                        <select name="date_select" id="date_select" class="form-control">
+                            
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="col-md-8">
@@ -122,6 +127,51 @@
         		}
         	});
             
+        });
+
+        var data = {
+            "action": "get_date",
+            "form": {},
+            "module": {}
+        };
+        
+        $.ajax({
+            url: 'parse.php',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function(json) {
+                var backSuccess = false;
+                var backResult = "";
+
+                if (typeof json === 'object') {
+                    backSuccess = json.hasOwnProperty('success') ? json.success : false;
+                    backResult = json.hasOwnProperty('result') ? json.result : false;    
+                }
+
+                if (backSuccess == true) {
+                    var html = "";
+                    console.log(backResult);
+
+                    for (var i in backResult) {
+                        if (backResult.hasOwnProperty(i)) {
+                            html += "<option value="+ i +">" + backResult[i] + "</option>";
+                        }
+                    }
+
+                    if (html != "" && html != "undefined") {
+                        $("#date_select").html(html);
+                    }
+                    
+                    
+                } else {
+                    console.log('Please Contact Us');
+                }
+            },
+            error: function(data, status, errorThrown) {
+                console.log('ERRORs: ' + status + " " +errorThrown);
+            }
+
         });
     });
     </script>
