@@ -1,12 +1,52 @@
 <?php
-
+if (empty($_POST) && empty($_FILES)) {
+	exit("Access Denied");
+}
 
 if (isset($_FILES) && !empty($_FILES)) {
 	file_storage($_FILES); 
 }
 
 if (isset($_POST) && !empty($_POST)) {
-	get_Date($_POST);
+	$ret = array("success"=>false, "result" => null);
+
+	$action = array_key_exists("action", $_POST) ? $_POST["action"] : "";
+
+	if (!empty($action))  {
+		switch(trim($action)) {
+			case 'get_date':
+				get_Date($_POST);
+				break;
+			case 'get_chat':
+				$formArr = array_key_exists("form", $_POST) ? $_POST["form"] : "";
+				$index = array_key_exists("index", $formArr) ? $formArr["index"] : "";
+
+				$getFile = get_Date($action);
+
+				$chatData = array("status"=>null, "data" => null);
+				if (array_key_exists("success", $getFile)
+					&& $getFile["success"] = true) {
+					$fileName = $getFile["module"]["file"];
+
+					if (!empty($fileName)) {
+						$tempData = loadText($fileName, $index);
+						if (is_array($tempData)) {
+							$chatData["status"] = array_key_exists("status", $tempData) ? $tempData["status"] : "";
+							$chatData["data"] = array_key_exists("data", $tempData) ? $tempData["data"] : "";
+						}
+
+						if (is_array($chatData["data"]) && is_array($chatData["status"])) {
+							$ret["success"] = true;
+							$ret["result"] = $chatData;
+						}
+						
+					}
+				}
+
+				return print_r(json_encode($ret, JSON_UNESCAPED_UNICODE));
+				break;
+		}
+	}
 }
 
 function file_storage($data) {
@@ -190,10 +230,10 @@ function loadText($file, $index = -1, $dataType = null) {
 	
 	// print_r("發言人數： ".count($data[$chatDay[$index]]["status"]));
 	// echo "<br>";
-	if($index > 1 && isset($dataType)) {
+	if ($index > 1 && !empty($dataType)) {
 		arsort($data[$chatDay[$index]]["status"]);
 		return $data[$chatDay[$index]][$dataType];
-	} elseif($index > 1 && !isset($dataType)) {
+	} elseif ($index > 1 && empty($dataType)) {
 		arsort($data[$chatDay[$index]]["status"]);
 		return $data[$chatDay[$index]];
 	} elseif ($index ==0) {
@@ -207,8 +247,8 @@ function loadText($file, $index = -1, $dataType = null) {
 	// print_r($time);
 }
 
-function get_Date($data) {
-	$ret = array("success" => false, "result" => null);
+function get_Date($data = null) {
+	$ret = array("success" => false, "result" => null, "module" => null);
 
 	//check file folder
 	$folderName = "file";
@@ -240,11 +280,18 @@ function get_Date($data) {
 			if (is_array($parseData) && count($parseData) > 0) {
 				$ret["success"] = true;
 				$ret["result"] = $parseData;
+				$ret["module"] = array(
+					"file" => $curFile
+					);
 			}
 		}
 		
 	}
-	
+
+	if ($data === "get_chat") {
+		return $ret;
+	}
+
 	return print_r(json_encode($ret, JSON_UNESCAPED_UNICODE));
 }
 

@@ -56,9 +56,26 @@
                     <div class="form-group">
                         <label for="date">選擇日期：</label>
                         <select name="date_select" id="date_select" class="form-control">
-                            
+                            <option value=''>請選擇日期~</option>>
                         </select>
                     </div>
+                </div>
+
+                <div class="page-header">
+                    <h1>Status</h1>
+                </div>
+                <div class="col-md-12">
+                    <table class="table table-striped" id="chat_status">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Counts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-md-8">
@@ -66,7 +83,18 @@
                     <h1>Read</h1>
                 </div>
                 <div class="col-md-12">
-                    aaa
+                    <table class="table table-striped" id="chat_data">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Time</th>
+                                <th>Content</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div> 
@@ -118,6 +146,7 @@
                             }
                         }
                         console.log("檔案： " + response + "上傳成功。");
+                        location.reload();
                     } else {
                         console.log('Upload fail !');
                     }
@@ -127,6 +156,64 @@
         		}
         	});
             
+        });
+
+        $("#date_select").on("change", function(e) {
+            e.preventDefault();
+            var selectVal = $(this).val();
+            var data = {
+                "action": "get_chat",
+                "form": {
+                    "index" : selectVal
+                },
+                "module": {}
+            };
+            
+            if (selectVal != "" && selectVal != "undefined") {
+                //console.log(data);
+                $.ajax({
+                    url: 'parse.php',
+                    type: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    success: function(json) {
+                        var backSuccess = false;
+                        var backResult = "";
+                        
+                        if (typeof json === 'object') {
+                            backSuccess = json.hasOwnProperty('success') ? json.success : false;
+                            backResult = json.hasOwnProperty('result') ? json.result : false;
+
+                            backData = backResult.hasOwnProperty('data') ? backResult.data : false;
+                            backStatus = backResult.hasOwnProperty('status') ? backResult.status : false;    
+                        }
+
+                        if (backSuccess == true) {
+                            var chatStatus = "";
+                            var chatData = "";
+                            for(var i in backStatus) {
+                                chatStatus += "<tr><td>"+ i +"</td><td>"+ backStatus[i] +"</td></tr>";
+                            }
+                            //console.log(backData);
+                            for(var j in backData) {
+                                var chatRow = backData[j];
+                                chatData += "<tr><td>"+ chatRow.author +"</td><td>"+ chatRow.date_t +"</td><td>"+ chatRow.content +"</td></tr>";
+                            }
+                            if (chatStatus != "") {
+                                $("#chat_status > tbody").html(chatStatus);
+                            }
+                            if (chatData != "") {
+                                $("#chat_data > tbody").html(chatData);
+                            }
+                        } else {
+                            console.log('Data fail !');
+                        }
+                    },
+                    error: function(data, status, errorThrown) {
+                        console.log('ERRORs: ' + status + " " +errorThrown);
+                    }
+                });                
+            }
         });
 
         var data = {
@@ -151,8 +238,7 @@
 
                 if (backSuccess == true) {
                     var html = "";
-                    console.log(backResult);
-
+                    //console.log(backResult);
                     for (var i in backResult) {
                         if (backResult.hasOwnProperty(i)) {
                             html += "<option value="+ i +">" + backResult[i] + "</option>";
@@ -160,7 +246,7 @@
                     }
 
                     if (html != "" && html != "undefined") {
-                        $("#date_select").html(html);
+                        $("#date_select").append(html);
                     }
                     
                     
@@ -171,7 +257,6 @@
             error: function(data, status, errorThrown) {
                 console.log('ERRORs: ' + status + " " +errorThrown);
             }
-
         });
     });
     </script>
