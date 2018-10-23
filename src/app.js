@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
+
+import NavBarBs from './components/NavBarBs'
 import HelloWorld from './components/Helloworld'
 
 class App extends Component {
+    
     render() {
-        return ( 
-            <HelloWorld text = "今天就開始學React!" />
+        return (
+            <div>
+                <NavBarBs />
+                <HelloWorld content = "今天就開始!" />
+            </div>
         )
     }
 }
