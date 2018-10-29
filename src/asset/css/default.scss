@@ -1,0 +1,29 @@
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 5px;
+  color: #000;
+  background: #f5f8fa;
+}
+
+.app-body {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  overflow-x: hidden;
+
+  .main {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.main .container-fluid {
+  padding: 0 30px;
+}

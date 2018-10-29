@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class HelloWorld extends Component {
+export default class Main extends Component {
     constructor(props) {
         super(props)
 
@@ -10,5 +10,3 @@ class HelloWorld extends Component {
         return <h5>{ this.props.content }</h5>
     }
 }
-
-export default HelloWorld
