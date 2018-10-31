@@ -5,14 +5,23 @@ import { Container, Row, Col } from 'react-bootstrap'
 import AppHeader  from './components/Header'
 import AppFooter  from './components/Footer'
 import Test from './components/Test'
+import Parse from './components/Parse'
 import Home from './components/Home'
 
-export default class App extends Component {
+class App extends Component {
+
     render() {
+        const navsItems = [
+            {path: '/', label: 'Home'},
+            {path: '/testA', label: 'TestA'},
+            {path: '/testB', label: 'TestB'},
+            {path: '/parse', label: 'Parse'},
+        ]
+
         return (
             <Router>
                 <div className="app">
-                    <AppHeader />
+                    <AppHeader datas={navsItems} />
 
                     <main>
                         <Container fluid>
@@ -23,6 +32,7 @@ export default class App extends Component {
                                         <Route exact path="/" component={ Home } />
                                         <Route path="/testA" component={ props => <Test {...props} content="test C" /> } />
                                         <Route path="/testB" component={ props => <Test {...props} content="test B" /> } />
+                                        <Route path="/Parse" component={ Parse } />
                                         <Redirect to="/" />
                                     </Switch>
                                 </Col>
@@ -36,3 +46,5 @@ export default class App extends Component {
         )
     }
 }
+
+export default App

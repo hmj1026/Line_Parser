@@ -1,24 +1,30 @@
 import React, { Component } from 'react'
 import { Navbar, Nav, NavDropdown, Form, FormControl, Button } from 'react-bootstrap'
-import { LinkContainer } from 'react-router-bootstrap'
+import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 
 class Header extends Component {
+
     render() {
+        const { datas } = this.props
+
+        const navItems = datas.map((item, key) => {
+            return (
+                <LinkContainer to={ item.path } key={ key }>
+                    <Nav.Link>{ item.label }</Nav.Link>
+                </LinkContainer>
+            )
+        })
+
         return (
             <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
+                <IndexLinkContainer to="/">
+                    <Navbar.Brand> Line - Tools </Navbar.Brand>
+                </IndexLinkContainer>
+                
+                <Navbar.Toggle aria-controls="navbar-nav" />
+                <Navbar.Collapse id="navbar-nav">
                     <Nav className="mr-auto">
-                        <LinkContainer to="/">
-                            <Nav.Link>Home</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to="/testA">
-                            <Nav.Link>TestA</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to="/testB">
-                            <Nav.Link>TestB</Nav.Link>
-                        </LinkContainer>
+                        { navItems }
                         <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
