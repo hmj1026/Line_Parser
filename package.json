@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --mode development --config webpack.config.js",
+    "dev": "webpack-dev-server --mode development --config webpack.config.js --hot",
     "prod": "webpack --mode production --config webpack.config.js"
   },
   "repository": {
@@ -35,9 +35,11 @@
     "react": "^16.5.2",
     "react-bootstrap": "^1.0.0-beta.1",
     "react-dom": "^16.5.2",
+    "react-redux": "^5.1.0",
     "react-router": "^4.3.1",
     "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",

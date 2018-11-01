@@ -57,6 +57,9 @@ module.exports = {
             }
         ]
     },
+    resolve: {
+        extensions: ['*', '.js', '.jsx']
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'dist/index.html'),
@@ -69,6 +72,8 @@ module.exports = {
     devtool: 'eval-source-map',
     devServer: {
         contentBase: path.resolve(__dirname, 'dist'),
+        inline: true,
+        hot: true,
         historyApiFallback: true
     }
 };

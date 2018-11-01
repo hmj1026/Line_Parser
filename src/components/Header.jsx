@@ -18,7 +18,7 @@ class Header extends Component {
         return (
             <Navbar bg="light" expand="lg">
                 <IndexLinkContainer to="/">
-                    <Navbar.Brand> Line - Tools </Navbar.Brand>
+                    <Navbar.Brand> React - Training </Navbar.Brand>
                 </IndexLinkContainer>
                 
                 <Navbar.Toggle aria-controls="navbar-nav" />
