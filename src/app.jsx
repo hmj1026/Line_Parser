@@ -4,15 +4,14 @@ import { Route, Switch, Redirect, BrowserRouter as Router } from 'react-router-d
 import { Container, Row, Col } from 'react-bootstrap'
 
 import { Provider } from 'react-redux'
+import store from './stores'
 
 import AppHeader  from './components/Header'
 import AppFooter  from './components/Footer'
 import Parse from './components/Parse'
 import Home from './components/Home'
 import Test from './components/Test'
-
-import store from './stores'
-
+import TodoRoute from './routes/TodoRoute'
 
 class App extends Component {
 
@@ -38,7 +37,7 @@ class App extends Component {
                                             <Route exact path="/" component={ Home } />
                                             <Route path="/testA" component={ props => <Test {...props} content="test A" /> } />
                                             <Route path="/parse" component={ Parse } />
-                                            <Route path="/todo" component={ Parse } />
+                                            <Route path="/todo" component={ TodoRoute } />
                                             <Redirect to="/" />
                                         </Switch>
                                     </Col>

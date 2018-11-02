@@ -1,3 +1,6 @@
-export default function stores() {
-    return { aa: 'abc' }
-}
+import { createStore } from 'redux'
+import reducer from '../reducers'
+
+const store = createStore(reducer)
+
+export default store
