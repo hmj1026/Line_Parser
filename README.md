@@ -1,7 +1,13 @@
-## 目的
+# React training with redux and router
 
-分析LINE群組聊天紀錄
 
-## 安裝
+## Target
+  This project had designed for analyizing  the line chat record were export.
+Now trying to make this combined with react.
 
-安裝WEB SERVER~
+## Manual
+
+```js
+yarn
+yarn dev
+```
