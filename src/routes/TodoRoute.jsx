@@ -1,17 +1,29 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { ADD_TODO, DELETE_TODO } from '../actions'
+import { addTodo, deleteTodo } from '../actions';
+import TodoList from '../components/TodoList'
 
 /**
  * @class TodoRoute
  */
 class TodoRoute extends Component {
     render() {
+        
+        const { dispatch, todolist } = this.props
+
         return (
-            <h5>TodoList 製作中</h5>
+            <TodoList 
+                todolist={ todolist }
+                onAdd={ text => dispatch(addTodo(text)) }
+                onDel={ index => dispatch(deleteTodo(index)) } />
         )
     }
 }
 
-export default TodoRoute
+const mapStateToProps = (state) => {
+    
+    return { todolist: state.todoLists }
+}
+
+export default connect(mapStateToProps)(TodoRoute)

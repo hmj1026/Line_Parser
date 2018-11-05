@@ -1,6 +1,11 @@
 import { ADD_TODO, DELETE_TODO } from '../actions'
 
-const todos = (state=[], action) => {
+
+const initialData = [
+    { text: 'start' }
+]
+
+const todos = (state = initialData, action) => {
     switch(action.type) {
         case ADD_TODO:
             return [

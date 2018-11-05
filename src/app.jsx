@@ -16,6 +16,7 @@ import TodoRoute from './routes/TodoRoute'
 class App extends Component {
 
     render() {
+        
         const navsItems = [
             {path: '/', label: 'Home'},
             {path: '/testA', label: 'TestA'},
@@ -24,6 +25,7 @@ class App extends Component {
         ]
 
         return (
+            
             <Provider store={ store }>
                 <Router>
                     <div className="app">
