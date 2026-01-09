@@ -7,12 +7,14 @@ module.exports = {
     output: {
         publicPath: '/',
         path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.[hash].js'
+        filename: 'bundle.[contenthash].js',
+        clean: true,
+        assetModuleFilename: 'assets/[hash][ext][query]'
     },
     module: {
         rules: [
             {
-                test: /.(js|jsx)/,
+                test: /\.(js|jsx)/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader'
@@ -20,40 +22,11 @@ module.exports = {
             },
             {
                 test: /\.s?css$/,
-                // exclude: /node_modules/,
-                use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
             },
             {
-                test: /\.(png|jpg|gif)$/i,
-                loader: 'url-loader'
-            },
-            {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'file-loader'
-            },
-            {
-                test: /\.(woff|woff2)$/,
-                loader: 'url-loader',
-                options: {
-                    prefix: 'font/',
-                    limit: 5000
-                }
-            },
-            {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'application/octet-stream',
-                    limit: 10000
-                }
-            },
-            {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'url-loader',
-                options: {
-                    mimetype: 'image/svg+xml',
-                    limit: 10000
-                }
+                test: /\.(png|jpg|gif|svg|eot|woff|woff2|ttf)$/i,
+                type: 'asset/resource'
             }
         ]
     },
@@ -66,14 +39,14 @@ module.exports = {
             filename: 'index.html'
         }),
         new MiniCssExtractPlugin({
-            filename: 'css/[name].css'
+            filename: 'css/[name].[contenthash].css'
         })
     ],
     devtool: 'eval-source-map',
     devServer: {
-        contentBase: path.resolve(__dirname, 'dist'),
-        inline: true,
+        static: path.resolve(__dirname, 'dist'),
         hot: true,
-        historyApiFallback: true
+        historyApiFallback: true,
+        port: 8080
     }
 };

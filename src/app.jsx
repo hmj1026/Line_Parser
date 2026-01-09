@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Route, Switch, Redirect, BrowserRouter as Router } from 'react-router-dom'
+import { Route, Routes, Navigate, BrowserRouter as Router } from 'react-router-dom'
 import { Container, Row, Col } from 'react-bootstrap'
 
 import { Provider } from 'react-redux'
@@ -35,13 +35,13 @@ class App extends Component {
                             <Container fluid>
                                 <Row>
                                     <Col md={12} style={ { textAlign:'center' } }>
-                                        <Switch>
-                                            <Route exact path="/" component={ Home } />
-                                            <Route path="/testA" component={ props => <Test {...props} content="test A" /> } />
-                                            <Route path="/parse" component={ Parse } />
-                                            <Route path="/todo" component={ TodoRoute } />
-                                            <Redirect to="/" />
-                                        </Switch>
+                                        <Routes>
+                                            <Route path="/" element={ <Home /> } />
+                                            <Route path="/testA" element={ <Test content="test A" /> } />
+                                            <Route path="/parse" element={ <Parse /> } />
+                                            <Route path="/todo/*" element={ <TodoRoute /> } />
+                                            <Route path="*" element={ <Navigate to="/" replace /> } />
+                                        </Routes>
                                     </Col>
                                 </Row>
                             </Container>

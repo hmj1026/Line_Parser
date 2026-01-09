@@ -1,7 +1,33 @@
-node_modules
+# Dependencies
+node_modules/
 
+# Build output
+dist/bundle.*.js
+dist/css/
+
+# Lock files (choose one package manager)
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+yarn-error.log
+npm-debug.log*
+
+# User uploads
 file/*
 
-package-lock.json
-yarn-error.log
-yarn.lock
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
